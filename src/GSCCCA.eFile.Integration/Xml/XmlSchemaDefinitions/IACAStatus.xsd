@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- edited with XMLSpy v2010 rel. 2 (http://www.altova.com) by Chas Williams (private) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+	<xs:element name="Document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="XMLVersion"/>
+				<xs:element ref="Header"/>
+				<xs:element ref="Record" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Record">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PacketNum"/>
+				<xs:element ref="SeqNumber"/>
+				<xs:element ref="DocumentReceiptID"/>
+				<xs:element ref="EstimatedFee"/>
+				<xs:element ref="SubmitterRef"/>
+				<xs:element ref="Status"/>
+				<xs:element ref="StatusDate"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Header">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PacketNum">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="SeqNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Date">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="DocumentReceiptID">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="EstimatedFee">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="SubmitterRef">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Status">
+		<xs:complexType mixed="true">
+			<xs:attribute name="value" default="NoValue">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="AcceptedWithErrors"/>
+						<xs:enumeration value="NOStatus"/>
+						<xs:enumeration value="Rejected"/>
+						<xs:enumeration value="Accepted"/>
+						<xs:enumeration value="AwaitingPayment"/>
+						<xs:enumeration value="Resubmitted"/>
+						<xs:enumeration value="Cancelled"/>
+						<xs:enumeration value="AwaitingClerkReview"/>
+						<xs:enumeration value="Incomplete"/>
+						<xs:enumeration value="FailedToStamp"/>
+						<xs:enumeration value="NoValue"/>
+						<xs:enumeration value="InvalidXML"/>
+						<xs:enumeration value="InProcess"/>
+						<xs:enumeration value="SendingACK"/>
+						<xs:enumeration value="IDNotFound"/>
+						<xs:enumeration value="InternalProcessingError"/>
+						<xs:enumeration value="EmptyDocument"/>
+						<xs:enumeration value="OK"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="StatusDate">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="XMLVersion">
+		<xs:complexType>
+			<xs:attribute name="info" default="1.07">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="1.06"/>
+						<xs:enumeration value="1.07"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

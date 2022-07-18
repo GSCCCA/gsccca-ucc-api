@@ -1,0 +1,96 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>GSCCCA.eFile.Integration</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Chas Williams</Authors>
+    <Company>Georgia Superior Court Clerks' Cooperative Authority</Company>
+    <Description>UCC eFile Integration APi
+This API allows users a simple integration method to calling the https://efile.gsccca.org public web APIs for Account and UCC SOAP services. This is a .NET Standard 2.0 library designed to be implemented with a custom .NET project.</Description>
+    <Copyright>2019 GSCCCA</Copyright>
+    <PackageProjectUrl>https://efile.gsccca.org</PackageProjectUrl>
+    <RepositoryUrl>https://efile.gsccca.org/Implementers.aspx</RepositoryUrl>
+    <RepositoryType>Download</RepositoryType>
+    <PackageReleaseNotes>1.10.0
+- Full Release
+- Renamed release for nuget publish
+0.9.0
+- Public Beta</PackageReleaseNotes>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <LangVersion>8.0</LangVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageTags>eFile,GSCCCA,Georgia,Clerk,UCC,Uniform Commercial Code</PackageTags>
+  </PropertyGroup>
+
+  <!--<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>GSCCCA.eFile.Integration.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>-->
+
+  <!--<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>GSCCCA.eFile.Integration.xml</DocumentationFile>
+    <NoWarn>1701;1702;CS1591</NoWarn>
+  </PropertyGroup>-->
+
+  <ItemGroup>
+    <Compile Remove="Xml\XmlSchemaDefinitions\IACAFile.cs" />
+    <Compile Remove="Xml\XmlSchemaDefinitions\IACAStatus.cs" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <None Remove="Xml\XmlSchemaDefinitions\CreateClasses.bat" />
+  </ItemGroup>-->
+
+  <ItemGroup>
+    <PackageReference Include="EWSoftware.SHFB" Version="2019.4.14" />
+    <PackageReference Include="EWSoftware.SHFB.NETCore" Version="4.5.1" />
+    <PackageReference Include="EWSoftware.SHFB.NETFramework" Version="4.7.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.4.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Xml\XmlSchemaDefinitions\AuthorityWallet.xsd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Xml\XmlSchemaDefinitions\IACAFile.xsd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Xml\XmlSchemaDefinitions\IACAStatus.xsd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

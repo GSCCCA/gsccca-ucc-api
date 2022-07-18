@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GSCCCA.eFile.Integration", "GSCCCA.eFile.Integration\GSCCCA.eFile.Integration.csproj", "{5FE453BF-7BA8-46E4-B2A1-913AB9BA6E1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSCCCA_UCC_DEMO", "..\test\GSCCCA_UCC_DEMO\GSCCCA_UCC_DEMO.csproj", "{BD51A8D0-4ADB-4EC8-9C2E-131C79412CF9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5FE453BF-7BA8-46E4-B2A1-913AB9BA6E1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FE453BF-7BA8-46E4-B2A1-913AB9BA6E1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FE453BF-7BA8-46E4-B2A1-913AB9BA6E1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FE453BF-7BA8-46E4-B2A1-913AB9BA6E1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD51A8D0-4ADB-4EC8-9C2E-131C79412CF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD51A8D0-4ADB-4EC8-9C2E-131C79412CF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD51A8D0-4ADB-4EC8-9C2E-131C79412CF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD51A8D0-4ADB-4EC8-9C2E-131C79412CF9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {31353FEB-7BB8-45F3-B58E-6F16A39E4CF2}
+	EndGlobalSection
+EndGlobal

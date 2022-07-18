@@ -1,0 +1,1940 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GSCCCA.eFile.Integration</name>
+    </assembly>
+    <members>
+        <member name="T:GSCCCA.eFile.Integration.CountyService">
+            <summary>
+            Service class that makes calls to the Clerks Authority UCC and Account APIs
+            For use by counties who are processing submittted UCCs
+            </summary>
+            <remarks>
+            This should be called in a using statement in order to dispose of the connection when completed.
+            <code>
+                    using (var service = new CountyService(loader))
+                    {
+                        return await service.CallCheckCredentialsAsync(user, password);
+                    }
+            </code>
+            </remarks>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.#ctor">
+            <summary>
+            When used, will use the default IEndpointLoader to get all endpoint values.
+            </summary>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.#ctor(System.String)">
+            <summary>
+            When used, will use the default IEndpointLoader to get the ASMX pages, but the base endpoint is set by the <paramref name="endpointBase"/> parameter.
+            </summary>
+            <param name="endpointBase">Defines the address Uri without the ASMX page</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.#ctor(GSCCCA.eFile.Integration.IEndpointLoader)">
+            <summary>
+            When used, will use the custom given IEndpoingLoader to get all endpoint values.
+            </summary>
+            <param name="loader">Defines how endpoints will be set</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.#ctor(System.String,GSCCCA.eFile.Integration.IEndpointLoader)">
+            <summary>
+            When used, will load the endpoint addresses using the loader, but it will set the endpoint base given
+            </summary>
+            <param name="endpointBase">Defines the address Uri without the ASMX page</param>
+            <param name="loader">Defines how endpoints will be set</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallCheckCredentialsAsync(System.String,System.String)">
+            <summary>
+            Calls Account.CheckCredentials()
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <returns>true if credentials are valid</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallGetQueueAsync(System.String,System.String)">
+            <summary>
+            Calls UCC.GetQueue
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <returns>array of filing identifiers</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallGetFilingDataAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Gets the full and most up to date XML data associated with the submitted UCC
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to return</param>
+            <returns>IACA File XML with Georgia modifications</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallGetFilingDocumentAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Gets the PDF document of the given UCC
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to return</param>
+            <returns>PDF document of filing (stamped if accepted)</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallAcceptAsync(System.String,System.String,System.Int32,System.String,System.DateTime)">
+            <summary>
+            Calls UCCService.Accept()
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to accept</param>
+            <param name="filenumber">optional parameter used if you are assigning file numbers</param>
+            <param name="acceptedDateTime">optional parameter used if the accept time needs to be backdated</param>
+            <returns>IACA File XML object</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallGetRejectionReasonsAsync">
+            <summary>
+            Calls UCCService.GetRejectionReasons()
+            </summary>
+            <returns>An array that contains all valid rejection reasons</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallRejectAsync(System.String,System.String,System.Int32,System.String[])">
+            <summary>
+            Calls UCCService.Reject()
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to reject</param>
+            <param name="reasons">applicable rejection reasons</param>
+            <returns>true if the UCC is rejected</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallUnrejectAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Calls UCCService.Unreject()
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to reject</param>
+            <returns>true if the UCC is unrejected</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.CountyService.CallArchiveFilingAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Archives a UCC on the https://efile.gsccca.org dashboard
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to archive</param>
+            <returns>true if the filing was archived</returns>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.FilerService">
+            <summary>
+            Service class that makes calls to the Clerks Authority UCC and Account APIs
+            For use by filers who are submitting new UCCs
+            </summary>
+            <remarks>
+            This should be called in a using statement in order to dispose of the connection when completed.
+            <code>
+                    using (var service = new FilerService(loader))
+                    {
+                        return await service.CallCheckCredentialsAsync(user, password);
+                    }
+            </code>
+            </remarks>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.#ctor">
+            <summary>
+            When used, will use the default IEndpointLoader to get all endpoint values.
+            </summary>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.#ctor(System.String)">
+            <summary>
+            When used, will use the default IEndpointLoader to get the ASMX pages, but the base endpoint is set by the <paramref name="endpointBase"/> parameter.
+            </summary>
+            <param name="endpointBase">Defines the address Uri without the ASMX page</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.#ctor(GSCCCA.eFile.Integration.IEndpointLoader)">
+            <summary>
+            When used, will use the custom given IEndpoingLoader to get all endpoint values.
+            </summary>
+            <param name="loader">Defines how endpoints will be set</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.#ctor(System.String,GSCCCA.eFile.Integration.IEndpointLoader)">
+            <summary>
+            When used, will load the endpoint addresses using the loader, but it will set the endpoint base given
+            </summary>
+            <param name="endpointBase">Defines the address Uri without the ASMX page</param>
+            <param name="loader">Defines how endpoints will be set</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallCheckCredentialsAsync(System.String,System.String)">
+            <summary>
+            Used to check user credentials to ensure the input/loaded values are correct. 
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <returns>true if credentials are valid</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallQueryFundsAsync(System.String,System.String)">
+            <summary>
+            Gets the GSCCCA eFile Wallet items that can be used as payment on https://efile.gsccca.org
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <returns>Object containing all credit card, ACH, escrow information for efile.gsccca.org</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallDepositEscrowAsync(System.String,System.String,System.String,System.Decimal)">
+            <summary>
+            Deposits funds into an escrow account that can be used as a payment method on https://efile.gsccca.org
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="token">value telling efile.gsccca.org how to pay - found by calling CallQueryFundsAsync</param>
+            <param name="amount">amount to pay into escrow account</param>
+            <returns>true if payment is successful and escrow is funded</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallIsParticipatingAsync(System.String)">
+            <summary>
+            Determine if a county is participating in UCC.
+            </summary>
+            <param name="county">County name, FIPS code, or number</param>
+            <returns>true indicates you can submit electronic UCCs to the county, false indicates you cannot</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallCancelAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Cancel a rejected or awaiting payment UCC 
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>aram>
+            <param name="id">filing identifier of UCC to cancel</param>
+            <returns>true indicates that the UCC was cancelled</returns>
+            <remarks>Cancel can only work on UCCs in the Rejected or AwaitingPayment status. Once a UCC
+            is in Awaiting Clerk Review and visible to the county, it cannot be cancelled or removed from
+            the county queue. The same applies to Accepted filings.
+            Cancelling a UCC removes any escrow hold that is on the UCC.
+            </remarks>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallSubmitAsync(System.String,System.String,System.String,System.String,System.Byte[])">
+            <summary>
+            Submits a new UCC to a county. 
+            Once submitted, payment must be authorized in order to be visible in the county queue.
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="county">County name, FIPS code, or number</param>
+            <param name="filingXML">IACA File XML with Georgia modifications</param>
+            <param name="document">PDF of UCC filing</param>
+            <returns>Object containing filing data</returns>
+            <remarks>The PDF document submitted is the official filing, its text superseding the XML.</remarks>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallResubmitAsync(System.String,System.String,System.String,System.String,System.Byte[])">
+            <summary>
+            Resubmits a previously rejected UCC. 
+            Anything can be changed about  the UCC on resubmittal in order to fix the original filing.
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="county">County name, FIPS code, or number</param>
+            <param name="filingXML">IACA File XML with Georgia modifications</param>
+            <param name="document">PDF of UCC filing</param>
+            <returns>IACA Status and Receipt XML with Georgia modifications</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallPayAsync(System.String,System.String,System.String,System.Decimal,System.Int32)">
+            <summary>
+            Authorizes payment for a submitted UCC that is in the AwaitingPayment status.
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="token">value telling efile.gsccca.org how to pay - found by calling CallQueryFundsAsync</param>
+            <param name="fee">estimated fee returned when submitted - used to ensure filer knows how much they are paying</param>
+            <param name="id">filing identifier of UCC to pay</param>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallGetStatusAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Gets the current status of a given UCC in the eFile workflow.
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to return</param>
+            <returns>IACA Reciept and Status XML</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallArchiveFilingAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Archives a UCC on the https://efile.gsccca.org dashboard
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to archive</param>
+            <returns>true if the filing was archived</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallGetFilingDataAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Gets the full and most up to date XML data associated with the submitted UCC
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to return</param>
+            <returns>IACA File XML with Georgia modifications</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.CallGetFilingDocumentAsync(System.String,System.String,System.Int32)">
+            <summary>
+            Gets the PDF document of the given UCC
+            </summary>
+            <param name="user">efile.gsccca.org username</param>
+            <param name="password">efile.gsccca.org password</param>
+            <param name="id">filing identifier of UCC to return</param>
+            <returns>PDF document of filing (stamped if accepted)</returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.FilerService.Dispose(System.Boolean)">
+            <summary>
+            FilerService should be within a using statement in order to properly dispose of all resources
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.FileNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.Book">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.Page">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.FileDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.FileTime">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.LapseDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.FeeAmount">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.AdditionalFees">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.FilingOffice">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.FileStatus">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Acknowledgement.Errors">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileNumber.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Book">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Book.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Page">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Page.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileDate.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileTime">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileTime.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.LapseDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.LapseDate.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FeeAmount">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FeeAmount.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AdditionalFees">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AdditionalFees.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FilingOffice">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FilingOffice.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileStatus">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileStatus.Status">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileStatus.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.AcceptedWithErrors">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.NOStatus">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.Rejected">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.Accepted">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.AwaitingPayment">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.Resubmitted">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.Cancelled">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.AwaitingClerkReview">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.Incomplete">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.FileStatusStatus.FailedToStamp">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ResponseStatus">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ResponseStatus.Status">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ResponseStatus.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ResponseStatusStatus">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.ResponseStatusStatus.SuccessWithWarning">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.ResponseStatusStatus.Success">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ErrorText">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ErrorText.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ActionCode">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ActionCode.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType.AltType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.ManufacturedHome">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.JudgementLien">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.NonUCCFiling">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.NOAltType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.StateLien">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.AgLien">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.FederalLien">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.PublicFinance">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.TransmittingUtility">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingTypeAltType.FoodSecurityAct">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType1">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType1.AltType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType1.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType1AltType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType1AltType.NonUCCFiling">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType1AltType.NOAltType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltFilingType1AltType.AgLien">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignation">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignation.AltName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignation.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.Creditor">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.Beneficiary">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.LesseeLessor">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.NOAltName">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.BaileeBailor">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.Trustee">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.ConsigneeConsignor">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.LicenseeLicensor">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AltNameDesignationAltName.SellerBuyer">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentAction">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentAction.Action">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentAction.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.SecuredPartyChange">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.SecuredPartyAdd">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.DebtorAdd">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.SecuredPartyDelete">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.CollateralChange">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.DebtorDelete">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.CollateralAdd">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.CollateralDelete">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.NOAction">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.CollateralAssign">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.CollateralRestate">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.DebtorChange">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentActionAction.UnknownAction">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentType.Type">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentType.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.TerminationSecuredParty">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.Assignment">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.NOType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.Continuation">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.TerminationDebtor">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.Correction">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.AmendmentParties">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.AmendmentCollateral">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.OfficerStatement">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.InformationStatement">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.AmendmentTypeType.UnknownType">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Assignor">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Assignor.Names">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Names">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.Item">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.MailAddress">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.City">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.State">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.PostalCode">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.County">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.Country">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.TaxID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.OrganizationalType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.OrganizationalJuris">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.OrganizationalID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Names.Mark">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.IndividualName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.IndividualName.LastName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.IndividualName.FirstName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.IndividualName.MiddleName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.IndividualName.Suffix">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.LastName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.LastName.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FirstName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FirstName.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.MiddleName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.MiddleName.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Suffix">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Suffix.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationName.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.MailAddress">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.MailAddress.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.City">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.City.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.State">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.State.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.PostalCode">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.PostalCode.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.County">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.County.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Country">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Country.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.TaxID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.TaxID.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalType.Type">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalType.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.RegisteredLimitedLiabilityLimitedPartnership">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.SoleProprietorship">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.Corporation">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.LimitedPartnership">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.UnincorporatedNonprofitAssociation">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.GeneralPartnership">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.UnincorporatedAssociation">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.LimitedLiabilityPartnership">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.NOType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.LimitedLiabilityLimitedPartnership">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.ForeignAssociation">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalTypeType.LimitedLiabilityCompany">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalJuris">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalJuris.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.OrganizationalID.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Mark">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Mark.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Attachment">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Attachment.MIMEType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Attachment.TextData">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.MIMEType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.MIMEType.Type">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.MIMETypeType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.MIMETypeType.PDF">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.TextData">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.TextData.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AuthDebtor">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AuthDebtor.Item">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AuthSecuredParty">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AuthSecuredParty.Item">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.AuthorizingParty">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AuthorizingParty.AuthSecuredParty">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.AuthorizingParty.AuthDebtor">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ClientAccountNum">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ClientAccountNum.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ColText">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ColText.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Collateral">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Collateral.ColText">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Collateral.FSAProducts">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Collateral.Attachment">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.NameCode">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.NameCode.Years">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.NameCode.Counties">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.NameCode.Unit">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.NameCode.Quantity">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.NameCode.Location">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.NameCode.Description">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Year">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Year.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Unit">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Unit.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Quantity">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Quantity.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Location">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Location.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Description">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Description.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.CollateralDesignation">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.CollateralDesignation.Type">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.CollateralDesignation.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.CollateralDesignationType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.CollateralDesignationType.NODesignation">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.CollateralDesignationType.PersonalRepresentative">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.CollateralDesignationType.Trust">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ContactEmail">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ContactEmail.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ContactFax">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ContactFax.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ContactName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ContactName.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ContactPhone">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ContactPhone.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Counties">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Counties.County">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.CurrentName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.CurrentName.Item">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacity">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacity.AltCapacity">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacity.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacityAltCapacity">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacityAltCapacity.Trustee">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacityAltCapacity.NOAltCapacity">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacityAltCapacity.Trust">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DebtorAltCapacityAltCapacity.Estate">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.DebtorName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DebtorName.Names">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DebtorName.DebtorAltCapacity">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DebtorName.NotIndexedReason">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DebtorName.Trust">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DebtorName.TrustDate">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.NotIndexedReason">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.NotIndexedReason.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Trust">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Trust.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.TrustDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.TrustDate.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Debtors">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Debtors.DebtorName">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Designation">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Designation.Type">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Designation.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.DesignationType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DesignationType.Timber">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DesignationType.AsExtractedCollateral">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DesignationType.NOType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.DesignationType.Fixture">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileDocument">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileDocument.XMLVersion">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileDocument.Header">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileDocument.Record">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileDocument.FileSignature">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.XMLVersion">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.XMLVersion.Version">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.XMLVersionVersion">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.XMLVersionVersion.Item02162013">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.XMLVersionVersion.Item02162013a">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Header">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Header.Filer">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Header.PacketNum">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Header.Test">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Filer">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.Names">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ClientAccountNum">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ContactName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ContactPhone">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ContactEmail">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ContactFax">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ReturnURL">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ReturnUserID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ReturnUserPWD">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Filer.ReturnToken">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ReturnURL">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ReturnURL.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ReturnUserID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ReturnUserID.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ReturnUserPWD">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ReturnUserPWD.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.ReturnToken">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.ReturnToken.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.PacketNum">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.PacketNum.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Test">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Test.Choice">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Test.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.TestChoice">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.TestChoice.No">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.TestChoice.Yes">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Record">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.SeqNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.TransType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.AmendmentType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.AmendmentAction">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.InitialFileNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.InitialFileDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.SubmitterRef">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.DocumentReceiptID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.EstimatedFee">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.ActionCode">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.AltNameDesignation">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.AltFilingType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.AltFilingType1">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.FileInRealEstate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.SearchToReflect">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.MiscInfo">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.CurrentName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.Debtors">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.Secured">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.Assignor">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.Collateral">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.collateralDesignation">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.AuthorizingParty">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Record.Acknowledgement">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.SeqNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.SeqNumber.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.TransType">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.TransType.Type">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.TransType.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.TransTypeType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.TransTypeType.Initial">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.TransTypeType.Amendment">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.InitialFileNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.InitialFileNumber.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.InitialFileDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.InitialFileDate.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.SubmitterRef">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.SubmitterRef.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.DocumentReceiptID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.DocumentReceiptID.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.EstimatedFee">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.EstimatedFee.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileInRealEstate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileInRealEstate.Designation">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileInRealEstate.RealEstateDescription">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileInRealEstate.Names">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.RealEstateDescription">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.RealEstateDescription.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.SearchToReflect">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.SearchToReflect.Type">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.SearchToReflect.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.SearchToReflectType">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.SearchToReflectType.AllDebtors">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.SearchToReflectType.Debtor1">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaFile.v3.SearchToReflectType.Debtor2">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.MiscInfo">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.MiscInfo.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.SecuredName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.SecuredName.Names">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.SecuredName.NotIndexedReason">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FileSignature">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FileSignature.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Errors">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Errors.ErrorText">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.FSAProducts">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.FSAProducts.NameCode">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Secured">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Secured.SecuredName">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaFile.v3.Years">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaFile.v3.Years.Year">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.StatusDocument">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.StatusDocument.XMLVersion">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.StatusDocument.Header">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.StatusDocument.Record">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.XMLVersion">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.XMLVersion.info">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.XMLVersionInfo">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.XMLVersionInfo.Item106">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.XMLVersionInfo.Item107">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.Header">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Header.Date">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.Date">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Date.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.Record">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Record.PacketNum">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Record.SeqNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Record.DocumentReceiptID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Record.EstimatedFee">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Record.SubmitterRef">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Record.Status">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Record.StatusDate">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.PacketNum">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.PacketNum.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.SeqNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.SeqNumber.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.DocumentReceiptID">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.DocumentReceiptID.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.EstimatedFee">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.EstimatedFee.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.SubmitterRef">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.SubmitterRef.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.Status">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Status.value">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.Status.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.AcceptedWithErrors">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.NOStatus">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.Rejected">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.Accepted">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.AwaitingPayment">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.Resubmitted">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.Cancelled">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.AwaitingClerkReview">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.Incomplete">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.FailedToStamp">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.NoValue">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.InvalidXML">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.InProcess">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.SendingACK">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.IDNotFound">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.InternalProcessingError">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.EmptyDocument">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.IacaStatus.v3.StatusValue.OK">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IacaStatus.v3.StatusDate">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.IacaStatus.v3.StatusDate.Text">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IEndpointLoader">
+             <summary>
+             Defines an endpoint loader interface whose implementation will define how to set web service endpoints for your application.
+             </summary>
+             <remarks>
+             Implement this interface to define your own method for endpoint storage. (databse, user input, local user settings, etc.).
+             You can then pass your custom IEndpointLoader to the FilerService or CountyService
+             objects which then create the connection and make calls to the eFile web services.
+             </remarks>
+             <example>
+             This is the implmentation for the ConfigFileEndpointLoader which is included with this library. If you wish to create your own custom loader, you can 
+             use this as an example in order to do so.
+             <code>
+                 public class ConfigFileEndpointLoader : IEndpointLoader
+                 {
+                    public string LoadEndpointBase()
+                    {
+                        return ConfigurationManager.AppSettings["ENDPOINT"];
+                    }
+                    
+                    public string LoadAccountEndpoint()
+                    {
+                        return ConfigurationManager.AppSettings["ACT_ENDPOINT_ASMX"];
+                    }
+            
+                    public string LoadUCCEndpoint()
+                    {
+                        return ConfigurationManager.AppSettings["UCC_ENDPOINT_ASMX"];
+                    }
+                    
+                    public BasicHttpBinding LoadBinding()
+                    {
+                        return new BasicHttpBinding
+                               {
+                                 Name = "org.gsccca.ucc",
+                                 MaxReceivedMessageSize = int.MaxValue,
+                                 MaxBufferSize = int.MaxValue,
+                                 CloseTimeout = new TimeSpan(0, 5, 0),
+                                 OpenTimeout = new TimeSpan(0, 5, 0),
+                                 ReceiveTimeout = new TimeSpan(0, 5, 0),
+                                 SendTimeout = new TimeSpan(0, 5, 0)
+                                };
+                     }
+                 }
+             </code>
+             </example>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.IEndpointLoader.LoadWebPageUrl">
+            <summary>
+            Defines the base address for the website.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.IEndpointLoader.LoadEndpointBase">
+            <summary>
+            Defines the address Uri without the ASMX page appended.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.IEndpointLoader.LoadUCCEndpoint">
+            <summary>
+            Defines the ASMX page for the UCC API. This will be appended to the base endpoing Uri.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.IEndpointLoader.LoadAccountEndpoint">
+            <summary>
+            Defines the ASMX page for the Account API. This will be appended to the base endpoing Uri.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.IEndpointLoader.LoadBinding">
+            <summary>
+            Defines a BasicHttpBinding object. This will be used by the service object.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.ConfigFileEndpointLoader">
+            <summary>
+            Example endpoint loader. This loader gets the endpoint locations from a configuration file.
+             It is also the default loader if no other loader is supplied. 
+            </summary>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.ConfigFileEndpointLoader.LoadEndpointBase">
+            <summary>
+            Loads from your AppSettings key="ENDPOINT"
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.ConfigFileEndpointLoader.LoadAccountEndpoint">
+            <summary>
+            Loads from your AppSettings key="ACT_ENDPOINT_ASMX"
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.ConfigFileEndpointLoader.LoadUCCEndpoint">
+            <summary>
+            Loads from your AppSettings key="UCC_ENDPOINT_ASMX"
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.ConfigFileEndpointLoader.LoadBinding">
+            <summary>
+            Loads a hard coded binding, defined at compile time.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.IXmlSerializable">
+            <summary>
+            Used to define allowed XML objects for the <see cref="T:GSCCCA.eFile.Integration.Xml.XmlFormatter`1"/> class.
+            </summary>
+            <remarks>
+            <see cref="T:GSCCCA.eFile.Integration.Xml.XmlFormatter`1"/> is defined as <code>public class XmlFormatter{T} where T : IXmlSerializable</code>. It can only 
+            serilaize and deserialze XML which implements this interface. This prevents exceptions from accidently occurring due to setting T incorrectly
+            and allows for simple future extension of <see cref="T:GSCCCA.eFile.Integration.Xml.XmlFormatter`1"/> to handle more XML schemas.
+            <example>
+            <code>
+            var FilingData = XmlFormatter{GSCCCA.eFile.Integration.IacaFile.Document}.Deserialize(FilingXML);
+            </code>
+            </example>
+            </remarks>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.AuthorityWallet.Wallet">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.Wallet.XMLVersion">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.Wallet.CreditCards">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.Wallet.BankAccounts">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.Wallet.Escrow">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.AuthorityWallet.WalletXMLVersion">
+            <remarks/>
+        </member>
+        <member name="F:GSCCCA.eFile.Integration.AuthorityWallet.WalletXMLVersion.Item10">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.AuthorityWallet.WalletCreditCard">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletCreditCard.Type">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletCreditCard.Number">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletCreditCard.Expiration">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletCreditCard.Token">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.AuthorityWallet.WalletBankAccount">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletBankAccount.AccountName">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletBankAccount.AccountNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletBankAccount.RoutingNumber">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletBankAccount.Token">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.AuthorityWallet.WalletEscrow">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletEscrow.PostedBalance">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletEscrow.PendingPayments">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletEscrow.PendingDeposits">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletEscrow.AvailableBalance">
+            <remarks/>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.AuthorityWallet.WalletEscrow.Token">
+            <remarks/>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.Xml.GscccaXmlContainer">
+            <summary>
+            The GscccaXmlContainer allows easy access to search and parse xml documents.
+            </summary>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.GscccaXmlContainer.#ctor(System.Xml.Linq.XDocument)">
+            <summary>
+            </summary>
+            <param name="xml">XML as an XDocument contianing the entire body</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.GscccaXmlContainer.#ctor(System.String)">
+            <summary>
+            </summary>
+            <param name="xml">XML as a string contianing the entire body</param>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.Xml.GscccaXmlContainer.XML">
+            <summary>
+            A parsable XML body
+            </summary>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.Xml.GscccaXmlContainer.Item(System.String)">
+            <summary>
+            Finds all instances of the given element in the XML document and returns it as an IEnumerable.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.Xml.GscccaXmlValidator">
+            <summary>
+            The GSCCCA Validator will validate XML against a given schema.
+            This class assumes that the XML Schema is stored on disk and that the XML is
+             stored in a string.
+            If you wish to use your own validator, you can implement the IXmlValidator 
+             interface that is also located in this namespace and use your own.
+            </summary>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.GscccaXmlValidator.#ctor(System.String)">
+            <summary>
+            </summary>
+            <param name="schemaUri">The location of the XSD that the validator will use</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.GscccaXmlValidator.#ctor(System.String,System.String)">
+            <summary>
+            </summary>
+            <param name="schemaUri">The location of the XSD that the validator will use</param>
+            <param name="schemaNamespace">The namespace that the validator will use</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.GscccaXmlValidator.Validate(System.String,System.Action{System.Object,System.Xml.Schema.ValidationEventArgs})">
+            <summary>
+            Validates given XML against the schema
+            </summary>
+            <param name="xml">A string containing the XML data to validate</param>
+            <param name="validatorCallback">Will be called when a schema violation is found. The default if no callback is supplied is to throw an ArgumentException.</param>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.Xml.GscccaXmlValidator.SchemaUri">
+            <summary>
+            The location on disk taht the schema can be found
+            </summary>
+        </member>
+        <member name="P:GSCCCA.eFile.Integration.Xml.GscccaXmlValidator.SchemaNamespace">
+            <summary>
+            The namespace that will used to validate
+            </summary>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.Xml.IXmlValidator">
+            <summary>
+            Interface defining an XML Validator used by the Gsccca.eFile.Integration namespace
+            You can implement this interface to define your own validator.
+            </summary>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.IXmlValidator.Validate(System.String,System.Action{System.Object,System.Xml.Schema.ValidationEventArgs})">
+            <summary>
+            Validates given XML against the schema
+            </summary>
+            <param name="xml">A string containing the XML data to validate</param>
+            <param name="validatorCallback">Will be called when a schema violation is found.</param>
+        </member>
+        <member name="T:GSCCCA.eFile.Integration.Xml.XmlFormatter`1">
+            <summary>
+            XmlFormatter is used to convert string XML into a .NET object T and vice versa.
+            </summary>
+            <typeparam name="T">An IXmlSeriializable .NET object</typeparam>
+            <remarks>
+            <example>
+            In order to deserialize perform the following call.
+            <code>
+            var FilingData = XmlFormatter{GSCCCA.eFile.Integration.IacaFile.Document}.Deserialize(xml);
+            </code>
+            In order to serialize perform the followign call.
+            <code>
+            var xml = XmlFormatter{GSCCCA.eFile.Integration.IacaFile.Document}.Serialize(FilingData);
+            </code>
+            </example>
+            </remarks>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.XmlFormatter`1.Deserialize(GSCCCA.eFile.Integration.Xml.GscccaXmlContainer)">
+            <summary>
+            Deserializes XML representing a T object into that object
+            </summary>
+            <param name="container">Object that contains the XML keyed to a given T</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.XmlFormatter`1.Deserialize(System.String)">
+            <summary>
+            Deserializes XML representing a T object into that object
+            </summary>
+            <param name="xml">XML string of a given T</param>
+        </member>
+        <member name="M:GSCCCA.eFile.Integration.Xml.XmlFormatter`1.Serialize(`0)">
+            <summary>
+            Serilize a T into string xml
+            </summary>
+            <param name="xmlObject">T object to serialize</param>
+            <returns>xml string</returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 2 (http://www.altova.com) by Chas Williams (private) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+	<xs:element name="Wallet">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="XMLVersion" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Currently version 1.0 is the only version.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="CreditCards" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Exists if the user has at least one credit card on file.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CreditCard" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>All credit cards on file will be listed for the user.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Type" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>The descriptive type of the credit card.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Number" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Masked credit card number</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Expiration" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Expiration date in MM/YYYY format.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Token" type="xs:string" use="required">
+										<xs:annotation>
+											<xs:documentation>The token is a GUID used by the submitter to reference this credit card when paying.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="BankAccounts" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Exists if the user has at least one bank account on file.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="BankAccount" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>All bank accounts on file will be listed for the user.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="AccountName" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Account name listed.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="AccountNumber" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Partially masked account number.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="RoutingNumber" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Partially masked routing number.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Token" type="xs:string" use="required">
+										<xs:annotation>
+											<xs:documentation>The token is a GUID used by the submitter to reference this account when paying.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Escrow" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Exists if the user has an escrow account.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="PostedBalance" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>All money currently contained in the account.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="PendingPayments" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>All money that is currently held pending acceptance of filings on the account.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="PendingDeposits" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>All money paid into escrow, but not yet deposited into the account.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="AvailableBalance" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>The available money for use in payment. This is the Posted Balance minus the Pending Payments.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="Token" type="xs:string" use="required">
+							<xs:annotation>
+								<xs:documentation>The token is a GUID used by the submitter to reference escrow when paying.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
