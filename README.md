@@ -4,7 +4,7 @@ This repository is used to reference and make calls to the Georgia Superior Cour
 ## Contributing
 In order to contribute please read the [contributing guidelines][2].
 
-<sub><sub>MIT © Georgia Superior Court Clerks' Cooperative Authority. All rights reserved.</sub></sub>
+<sub><sub>MIT Â© Georgia Superior Court Clerks' Cooperative Authority. All rights reserved.</sub></sub>
 
 [1]: https://efile.gsccca.org/Implementers.aspx
-[2]: /docs/contributing.md
+[2]: /docs/CONTRIBUTING.md
